@@ -12,6 +12,7 @@ from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import flag_modified
 
 from database import init_db, get_db, Lead, ChatSession
 from chat import chat_with_claude, detect_insurance_topics, should_suggest_agent, generate_lead_summary, extract_contact_info, has_complete_contact_info
@@ -187,10 +188,12 @@ def chat(chat_request: ChatRequest, request: Request, db: Session = Depends(get_
         except Exception:
             pass  # Don't fail the chat if lead creation fails
 
-    # Update session
+    # Update session - must flag JSON columns as modified for SQLAlchemy to detect changes
     session.messages = messages
     session.insurance_topics = all_topics
     session.updated_at = datetime.utcnow()
+    flag_modified(session, "messages")
+    flag_modified(session, "insurance_topics")
     db.commit()
 
     return ChatResponse(
