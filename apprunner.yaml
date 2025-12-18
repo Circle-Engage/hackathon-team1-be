@@ -15,6 +15,7 @@ run:
       value: "1"
     - name: PYTHONPATH
       value: "/app"
-    # Set DATABASE_URL in App Runner console with your RDS connection string:
-    # postgresql://username:password@your-rds-endpoint.region.rds.amazonaws.com:5432/dbname
-    # Set AWS_REGION for Bedrock access
+    - name: DATABASE_URL
+      value: "postgresql://hackathon_admin:HackathonT1db2025!@hackathon-team1-db.cy8cfyehhges.us-east-1.rds.amazonaws.com:5432/chatbot"
+    - name: AWS_REGION
+      value: "us-east-1"
